@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graça & Palavra | Estudos Bíblicos e Devocionais Diários</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        },
+                        gold: {
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                        },
+                        cream: '#fdfbf7',
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        reading: ['Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+        .reading-text {
+            font-family: 'Merriweather', serif;
+            line-height: 1.85;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        /* AdSense Simulation Outline */
+        .adsense-placeholder {
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(217, 119, 6, 0.05) 10px, rgba(217, 119, 6, 0.05) 20px);
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 dark:bg-navy-950 dark:text-slate-100 min-h-screen flex flex-col antialiased">
+
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-navy-900 text-white dark:bg-gold-600 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-gold-500 dark:text-white text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Notificação</span>
+    </div>
+
+    <header class="sticky top-0 z-40 bg-white/90 dark:bg-navy-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo -->
+            <a href="#" onclick="showHomeView(); return false;" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-navy-900 to-slate-800 dark:from-gold-500 dark:to-gold-700 flex items-center justify-center text-gold-500 dark:text-navy-950 shadow-md group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-book-bible text-xl"></i>
+                </div>
+                <div>
+                    <span class="font-serif-title text-2xl font-bold tracking-tight text-navy-900 dark:text-white block leading-none">
+                        Graça <span class="text-gold-600 dark:text-gold-500">&</span> Palavra
+                    </span>
+                    <span class="text-[10px] tracking-widest uppercase text-slate-500 dark:text-slate-400 font-semibold block mt-1">Estudos & Devocionais</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Menu -->
+            <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                <button onclick="showHomeView()" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-gold-600 dark:hover:text-gold-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Início</button>
+                <button onclick="filterCategory('Estudos')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-gold-600 dark:hover:text-gold-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Estudos Bíblicos</button>
+                <button onclick="filterCategory('Devocionais')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-gold-600 dark:hover:text-gold-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Devocionais</button>
+                <button onclick="openModal('modal-sobre')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-gold-600 dark:hover:text-gold-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Sobre Nós</button>
+                <button onclick="openModal('modal-contato')" class="px-4 py-2 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-gold-600 dark:hover:text-gold-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Contato</button>
+            </nav>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Search Button -->
+                <button onclick="toggleSearchModal()" aria-label="Buscar estudos" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" onclick="toggleDarkMode()" aria-label="Alternar tema" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-lg hidden"></i>
+                    <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-lg text-gold-500"></i>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" aria-label="Abrir menu" class="md:hidden w-10 h-10 rounded-full flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-navy-900 px-4 pt-2 pb-6 space-y-2">
+            <button onclick="showHomeView(); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Início</button>
+            <button onclick="filterCategory('Estudos'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Estudos Bíblicos</button>
+            <button onclick="filterCategory('Devocionais'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Devocionais</button>
+            <button onclick="openModal('modal-sobre'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Sobre Nós</button>
+            <button onclick="openModal('modal-contato'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Contato</button>
+        </div>
+    </header>
+
+    <div id="search-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-start justify-center pt-20 px-4 hidden transition-opacity">
+        <div class="bg-white dark:bg-navy-900 rounded-2xl shadow-2xl max-w-2xl w-full p-6 border border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex items-center gap-3 flex-1 mr-4">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-lg"></i>
+                    <input type="text" id="search-input" onkeyup="handleSearch(event)" placeholder="Buscar por tema (ex: ansiedade, oração, deserto)..." class="w-full bg-transparent border-none focus:outline-none text-slate-900 dark:text-white placeholder-slate-400 text-base">
+                </div>
+                <button onclick="toggleSearchModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div id="search-results" class="mt-4 max-h-96 overflow-y-auto space-y-3">
+                <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Sugestões de busca:</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="quickSearch('Soberania')" class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">Soberania de Deus</button>
+                    <button onclick="quickSearch('Oração')" class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">Vencendo a Ansiedade</button>
+                    <button onclick="quickSearch('Semeador')" class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">Parábola do Semeador</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="main-content" class="flex-grow">
+        
+        <!-- ================= VIEW 1: HOME & LIST VIEW ================= -->
+        <div id="feed-view" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+            <section id="hero-section" class="relative rounded-3xl overflow-hidden bg-navy-900 text-white shadow-2xl border border-slate-800">
+                <div class="absolute inset-0 z-0 opacity-40 mix-blend-overlay">
+                    <img src="https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=1200&auto=format&fit=crop" alt="Bíblia aberta" class="w-full h-full object-cover">
+                </div>
+                <div class="relative z-10 p-8 sm:p-12 lg:p-16 max-w-3xl">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-gold-500/20 text-gold-400 border border-gold-500/30 mb-4">
+                        <i class="fa-solid fa-star text-[10px]"></i> Estudo em Destaque
+                    </span>
+                    <h1 class="font-serif-title text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight text-white mb-4">
+                        A Soberania de Deus no Deserto: Entendendo os Tempos de Espera
+                    </h1>
+                    <p class="text-slate-300 text-base sm:text-lg mb-6 line-clamp-2 leading-relaxed">
+                        Os momentos de silêncio e aridez na jornada cristã não representam abandono, mas sim a pedagogia divina moldando o caráter para as promessas futuras.
+                    </p>
+                    <div class="flex flex-wrap items-center gap-6 text-sm text-slate-300 mb-8">
+                        <span class="flex items-center gap-2"><i class="fa-regular fa-user text-gold-500"></i> Pr. João Gabriel</span>
+                        <span class="flex items-center gap-2"><i class="fa-regular fa-calendar text-gold-500"></i> 18 de Setembro, 2026</span>
+                        <span class="flex items-center gap-2"><i class="fa-regular fa-clock text-gold-500"></i> 7 min de leitura</span>
+                    </div>
+                    <button onclick="loadArticle(1)" class="inline-flex items-center gap-3 px-6 py-3.5 rounded-xl bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold transition-all shadow-lg hover:shadow-gold-500/20 hover:scale-[1.02]">
+                        Ler Estudo Completo <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <section class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4 overflow-x-auto">
+                <div class="flex items-center space-x-2 shrink-0">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2">Filtrar:</span>
+                    <button onclick="filterCategory('Todos')" class="category-btn active px-4 py-2 rounded-full text-xs font-bold bg-navy-900 text-white dark:bg-gold-500 dark:text-navy-950 transition">Todos</button>
+                    <button onclick="filterCategory('Vida Cristã')" class="category-btn px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-navy-950 transition">Vida Cristã</button>
+                    <button onclick="filterCategory('Antigo Testamento')" class="category-btn px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-navy-950 transition">Antigo Testamento</button>
+                    <button onclick="filterCategory('Novo Testamento')" class="category-btn px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-navy-950 transition">Novo Testamento</button>
+                    <button onclick="filterCategory('Oração')" class="category-btn px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-navy-950 transition">Oração</button>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Articles Feed Column (8 cols) -->
+                <div class="lg:col-span-8 space-y-6" id="articles-list">
+                    <!-- Cards populated via JS -->
+                </div>
+
+                <!-- Sidebar Column (4 cols) -->
+                <aside class="lg:col-span-4 space-y-8">
+                    
+                    <!-- ADSENSE DEMO BOX 1 (Sidebar Banner) -->
+                    <div class="bg-white dark:bg-navy-900 border-2 border-dashed border-amber-300 dark:border-amber-700/50 rounded-2xl p-4 text-center adsense-placeholder relative overflow-hidden shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest bg-amber-100 dark:bg-amber-950/80 px-2 py-0.5 rounded">
+                                Publicidade • Google AdSense
+                            </span>
+                            <i class="fa-solid fa-rectangle-ad text-amber-500 text-xs"></i>
+                        </div>
+                        <div class="h-[250px] flex flex-col items-center justify-center text-slate-400 p-4 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-navy-950/50 rounded-xl">
+                            <i class="fa-solid fa-layer-group text-3xl mb-2 text-amber-500/60"></i>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Espaço para Anúncio AdSense</span>
+                            <span class="text-[11px] text-slate-400 mt-1">Formato Médio Retângulo (300 x 250)</span>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter / Daily Devotional Card -->
+                    <div class="bg-gradient-to-br from-navy-900 via-slate-900 to-navy-950 text-white rounded-2xl p-6 shadow-xl border border-slate-800 relative overflow-hidden">
+                        <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-gold-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                        <div class="w-10 h-10 rounded-xl bg-gold-500/20 text-gold-400 flex items-center justify-center mb-4">
+                            <i class="fa-regular fa-envelope-open text-xl"></i>
+                        </div>
+                        <h3 class="font-serif-title text-xl font-bold mb-2">Devocional Diário no seu E-mail</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Receba todas as manhãs uma mensagem de fé, reflexão bíblica e fortalecimento espiritual diretamente na sua caixa de entrada.
+                        </p>
+                        <form onsubmit="subscribeNewsletter(event)" class="space-y-3">
+                            <div>
+                                <input type="email" id="newsletter-email" required placeholder="Seu melhor e-mail..." class="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-400 text-sm focus:outline-none focus:border-gold-500 transition">
+                            </div>
+                            <button type="submit" class="w-full py-3 bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold text-sm rounded-xl transition shadow-md">
+                                Inscrever-se Gratuitamente
+                            </button>
+                        </form>
+                        <p class="text-[10px] text-slate-400 text-center mt-3">Prometemos não enviar spam. Cancele quando quiser.</p>
+                    </div>
+
+                    <!-- Most Read Studies Sidebar List -->
+                    <div class="bg-white dark:bg-navy-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <h3 class="font-serif-title text-lg font-bold text-navy-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-gold-500"></i> Estudos Mais Lidos
+                        </h3>
+                        <div class="space-y-4" id="popular-articles">
+                            <!-- Popular articles populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Topic Tags Cloud -->
+                    <div class="bg-white dark:bg-navy-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <h3 class="font-serif-title text-lg font-bold text-navy-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                            Tópicos em Alta
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="quickSearch('Graça')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">#Graça</button>
+                            <button onclick="quickSearch('Fé')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">#Fé</button>
+                            <button onclick="quickSearch('Esperança')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">#Esperança</button>
+                            <button onclick="quickSearch('Salvação')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">#Salvação</button>
+                            <button onclick="quickSearch('Paz')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">#Paz</button>
+                            <button onclick="quickSearch('Propósito')" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition">#Propósito</button>
+                        </div>
+                    </div>
+
+                </aside>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 2: FULL ARTICLE READER VIEW ================= -->
+        <div id="article-view" class="hidden max-w-4xl mx-auto px-4 sm:px-6 py-8">
+            
+            <!-- Article Navigation Header Controls -->
+            <div class="flex items-center justify-between mb-8 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <button onclick="showHomeView()" class="inline-flex items-center gap-2 text-sm font-bold text-slate-600 dark:text-slate-300 hover:text-gold-600 dark:hover:text-gold-500 transition">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar para os estudos
+                </button>
+                <div class="flex items-center space-x-3">
+                    <span class="text-xs text-slate-400 font-medium">Tamanho da fonte:</span>
+                    <button onclick="changeFontSize(-1)" class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold hover:bg-gold-500 hover:text-white transition">A-</button>
+                    <button onclick="changeFontSize(1)" class="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-bold hover:bg-gold-500 hover:text-white transition">A+</button>
+                </div>
+            </div>
+
+            <!-- Article Details Container -->
+            <article class="bg-white dark:bg-navy-900 rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
+                
+                <!-- Article Header Meta -->
+                <header class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <span id="article-category" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-gold-500/10 text-gold-600 dark:text-gold-400 border border-gold-500/20">
+                            Categoria
+                        </span>
+                        <span id="article-readtime" class="text-xs text-slate-400 flex items-center gap-1">
+                            <i class="fa-regular fa-clock"></i> 5 min
+                        </span>
+                    </div>
+
+                    <h1 id="article-title" class="font-serif-title text-3xl sm:text-4xl lg:text-5xl font-bold text-navy-900 dark:text-white leading-tight">
+                        Título do Estudo Bíblico
+                    </h1>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-gold-600 dark:text-gold-400 font-bold">
+                                <i class="fa-solid fa-user-nib"></i>
+                            </div>
+                            <div>
+                                <span id="article-author" class="block text-sm font-bold text-navy-900 dark:text-white">Autor</span>
+                                <span id="article-date" class="block text-xs text-slate-400">Data</span>
+                            </div>
+                        </div>
+
+                        <!-- Share Buttons -->
+                        <div class="flex items-center space-x-2">
+                            <button onclick="shareArticle('whatsapp')" class="w-9 h-9 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition flex items-center justify-center" title="Compartilhar no WhatsApp">
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                            </button>
+                            <button onclick="copyArticleLink()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-gold-500 hover:text-white transition flex items-center justify-center" title="Copiar Link">
+                                <i class="fa-solid fa-link text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Featured Image -->
+                <div class="rounded-2xl overflow-hidden max-h-[400px]">
+                    <img id="article-image" src="" alt="Capa do artigo" class="w-full h-full object-cover">
+                </div>
+
+                <!-- ARTICLE RICH CONTENT BODY -->
+                <div id="article-body" class="reading-text text-slate-700 dark:text-slate-300 space-y-6 text-base sm:text-lg">
+                    <!-- Dynamic rich content injected via JS -->
+                </div>
+
+                <!-- Article Bottom Actions -->
+                <div class="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-slate-500">Compartilhe este estudo:</span>
+                        <button onclick="shareArticle('whatsapp')" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center gap-2 hover:bg-emerald-700 transition">
+                            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                        </button>
+                        <button onclick="copyArticleLink()" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center gap-2 hover:bg-slate-300 transition">
+                            <i class="fa-solid fa-copy"></i> Copiar Link
+                        </button>
+                    </div>
+                    <button onclick="showHomeView()" class="text-xs font-bold text-gold-600 dark:text-gold-400 hover:underline">
+                        ← Ver mais mensagens e estudos
+                    </button>
+                </div>
+            </article>
+        </div>
+
+    </main>
+
+    <!-- ================= MODAIS INSTITUCIONAIS (REQUISITOS ADSENSE) ================= -->
+
+    <!-- Modal: Sobre Nós e Sobre o Autor -->
+    <div id="modal-sobre" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-sobre')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="w-12 h-12 rounded-2xl bg-gold-500/10 text-gold-500 flex items-center justify-center mb-4">
+                <i class="fa-solid fa-church text-2xl"></i>
+            </div>
+            <h2 class="font-serif-title text-2xl font-bold text-navy-900 dark:text-white mb-4">Sobre o Portal Graça & Palavra</h2>
+            <div class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed space-y-4">
+                <p>
+                    O Graça & Palavra é um espaço dedicado ao estudo aprofundado das Escrituras Sagradas, reflexões devocionais e edificação espiritual. Nosso objetivo é oferecer conteúdos embasados, acessíveis e focados na transformação de vidas através da Palavra de Deus.
+                </p>
+                <h3 class="font-serif-title text-xl font-bold text-navy-900 dark:text-white mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">Sobre o Autor</h3>
+                <p>
+                    Cristão desde os 12 anos de idade, casado com Patrícia Silva de Carvalho e pai da Paloma, Erisnaldo F. Silva é o autor e ministrante responsável pelos estudos do blog. Bacharel em Teologia pela Universidade Cruzeiro do Sul e pós-graduado em Psicanálise Clínica, une a fundamentação teológica ao estudo da psicanálise para trazer reflexões profundas, contextuais e práticas para a caminhada cristã e o desenvolvimento espiritual dos leitores.
+                </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-right">
+                <button onclick="closeModal('modal-sobre')" class="px-5 py-2.5 bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold text-xs rounded-xl transition">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Política de Privacidade (Essencial AdSense) -->
+    <div id="modal-privacidade" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[85vh] overflow-y-auto">
+            <button onclick="closeModal('modal-privacidade')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-gold-500 flex items-center justify-center mb-4">
+                <i class="fa-solid fa-shield-halved text-2xl"></i>
+            </div>
+            <h2 class="font-serif-title text-2xl font-bold text-navy-900 dark:text-white mb-4">Política de Privacidade</h2>
+            <div class="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed space-y-4">
+                <p>A sua privacidade é extremamente importante para nós. É política do <strong>Graça & Palavra</strong> respeitar a sua privacidade em relação a qualquer informação que possamos coletar no site.</p>
+                
+                <h3 class="font-bold text-navy-900 dark:text-white text-base">1. Coleta de Informações e Cookies</h3>
+                <p>Solicitamos informações pessoais apenas quando realmente precisamos delas para lhe fornecer um serviço (como o envio de devocionais por e-mail). Fazemo-lo por meios justos e legais, com o seu conhecimento e consentimento.</p>
+
+                <h3 class="font-bold text-navy-900 dark:text-white text-base">2. Google AdSense e Cookies DART</h3>
+                <p>O Google, como fornecedor de terceiros, utiliza cookies para exibir anúncios em nosso site. Com o cookie DART, o Google pode exibir anúncios com base nas visitas que o leitor faz a este e a outros sites na Internet.</p>
+                <p>Os usuários podem desativar o uso do cookie DART visitando a Política de Privacidade da rede de conteúdo e dos anúncios do Google.</p>
+
+                <h3 class="font-bold text-navy-900 dark:text-white text-base">3. Compromisso do Usuário</h3>
+                <p>O usuário se compromete a fazer uso adequado dos conteúdos e da informação que o Graça & Palavra oferece no site e com caráter enunciativo, mas não limitativo: não se envolver em atividades ilegais ou contrárias à boa fé e à ordem pública.</p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-right">
+                <button onclick="closeModal('modal-privacidade')" class="px-5 py-2.5 bg-slate-800 text-white font-bold text-xs rounded-xl hover:bg-slate-700 transition">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Contato -->
+    <div id="modal-contato" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-navy-900 rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modal-contato')" class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="w-12 h-12 rounded-2xl bg-gold-500/10 text-gold-500 flex items-center justify-center mb-4">
+                <i class="fa-regular fa-paper-plane text-2xl"></i>
+            </div>
+            <h2 class="font-serif-title text-2xl font-bold text-navy-900 dark:text-white mb-2">Fale Conosco</h2>
+            <p class="text-xs text-slate-400 mb-6">Envie suas dúvidas, pedidos de oração ou sugestões de estudos bíblicos.</p>
+            
+            <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nome Completo</label>
+                    <input type="text" required placeholder="Seu nome" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-gold-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">E-mail</label>
+                    <input type="email" required placeholder="seuemail@exemplo.com" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-gold-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Mensagem</label>
+                    <textarea rows="4" required placeholder="Escreva sua mensagem aqui..." class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm focus:outline-none focus:border-gold-500"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold text-sm rounded-xl transition shadow-md">
+                    Enviar Mensagem
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="bg-navy-900 text-slate-300 border-t border-slate-800 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+                
+                <!-- Col 1: Brand -->
+                <div class="space-y-4 md:col-span-1">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-gold-500 text-navy-950 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-book-bible"></i>
+                        </div>
+                        <span class="font-serif-title text-xl font-bold text-white">Graça <span class="text-gold-500">&</span> Palavra</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Edificando vidas com a Verdade das Escrituras. Estudos bíblicos, devocionais diários e reflexões cristãs para o seu crescimento espiritual.
+                    </p>
+                </div>
+
+                <!-- Col 2: Navigation -->
+                <div>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Navegação</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><button onclick="showHomeView()" class="hover:text-gold-400 transition">Página Inicial</button></li>
+                        <li><button onclick="filterCategory('Estudos')" class="hover:text-gold-400 transition">Estudos Bíblicos</button></li>
+                        <li><button onclick="filterCategory('Devocionais')" class="hover:text-gold-400 transition">Devocionais Diários</button></li>
+                        <li><button onclick="openModal('modal-sobre')" class="hover:text-gold-400 transition">Sobre o Autor</button></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Legal & AdSense Requirements -->
+                <div>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Links Institucionais</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><button onclick="openModal('modal-privacidade')" class="hover:text-gold-400 transition">Política de Privacidade</button></li>
+                        <li><button onclick="openModal('modal-sobre')" class="hover:text-gold-400 transition">Termos de Uso</button></li>
+                        <li><button onclick="openModal('modal-contato')" class="hover:text-gold-400 transition">Contato & Suporte</button></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Daily Scripture Banner -->
+                <div>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">Versículo do Dia</h4>
+                    <div class="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50">
+                        <p class="text-xs italic text-slate-300 mb-2">"Lâmpada para os meus pés é tua palavra e luz, para o meu caminho."</p>
+                        <span class="text-[10px] font-bold text-gold-400 uppercase tracking-widest">— Salmos 119:105</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-slate-800/80 text-center md:flex md:justify-between md:items-center text-xs text-slate-500 space-y-4 md:space-y-0">
+                <p>&copy; 2026 Portal Graça & Palavra. Todos os direitos reservados.</p>
+                <p class="text-[11px]">Este site contém demonstrativos de espaços publicitários do Google AdSense.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        
+        // ARTICLES DATABASE
+        const articles = [
+            {
+                id: 1,
+                title: "A Soberania de Deus no Deserto: Entendendo os Tempos de Espera",
+                category: "Vida Cristã",
+                author: "Pr. João Gabriel",
+                date: "18 Set, 2026",
+                readTime: "7 min",
+                image: "https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=800&auto=format&fit=crop",
+                excerpt: "Os momentos de silêncio e aridez na jornada cristã não representam abandono, mas sim a pedagogia divina moldando o caráter para as promessas futuras.",
+                views: 1420,
+                content: `
+                    <p class="lead text-lg font-medium text-slate-800 dark:text-slate-200">
+                        Na teologia bíblica, o 'deserto' raramente é um lugar de punição final; ele é, na verdade, a escola de Deus onde a dependência do homem é refinada e a autoconfiança é desfeita.
+                    </p>
+
+                    <h2 class="font-serif-title text-2xl font-bold text-navy-900 dark:text-white mt-8 mb-4">1. O Propósito do Deserto</h2>
+                    <p>
+                        Quando olhamos para a trajetória de grandes figuras da fé — como Moisés durante 40 anos em Midiã, Elias junto ao ribeiro de Querite ou o próprio Senhor Jesus no deserto da Judeia — percebemos um padrão inequívoco: o deserto precede o comissionamento.
+                    </p>
+
+                    <!-- BIBLE VERSE BLOCKQUOTE STYLED -->
+                    <div class="my-6 p-6 rounded-2xl bg-amber-500/10 border-l-4 border-gold-500 text-slate-800 dark:text-slate-100 italic">
+                        <i class="fa-solid fa-quote-left text-gold-500/40 text-3xl block mb-2"></i>
+                        <p class="font-serif-title text-base sm:text-lg mb-2">"E te lembrarás de todo o caminho, pelo qual o Senhor teu Deus te guiou estes quarenta anos no deserto, para te humilhar, para te provar, para saber o que estava no teu coração..."</p>
+                        <span class="text-xs font-bold text-gold-600 dark:text-gold-400 not-italic uppercase tracking-widest">— Deuteronômio 8:2</span>
+                    </div>
+
+                    <p>
+                        No deserto, as distrações do Egito são removidas. Não há aplausos, não há recursos próprios suficientes e a única fonte de sustento diário torna-se o maná que desce do céu.
+                    </p>
+
+                    <!-- ADSENSE DEMO BANNER IN CONTENT -->
+                    <div class="my-8 my-10 bg-white dark:bg-navy-900 border-2 border-dashed border-amber-300 dark:border-amber-700/50 rounded-2xl p-4 text-center adsense-placeholder overflow-hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest bg-amber-100 dark:bg-amber-950/80 px-2 py-0.5 rounded">
+                                Anúncio Automático • Google AdSense
+                            </span>
+                            <span class="text-[10px] text-slate-400">Publicidade no Texto</span>
+                        </div>
+                        <div class="h-[120px] flex flex-col items-center justify-center text-slate-400 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-navy-950/50 rounded-xl">
+                            <i class="fa-solid fa-rectangle-ad text-2xl mb-1 text-amber-500/60"></i>
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">Anúncio Responsivo Integrado ao Artigo</span>
+                            <span class="text-[10px] text-slate-400">(Aumenta os ganhos sem atrapalhar a leitura)</span>
+                        </div>
+                    </div>
+
+                    <h2 class="font-serif-title text-2xl font-bold text-navy-900 dark:text-white mt-8 mb-4">2. Confiança na Providência Diária</h2>
+                    <p>
+                        A ansiedade humana deseja garantias para os próximos dez anos, mas a pedagogia da graça oferece o pão para o dia de hoje. A soberania de Deus não falha quando os suprimentos visíveis parecem escassear.
+                    </p>
+                    <p>
+                        Se você se encontra hoje em um período de aridez espiritual, lembre-se: Deus está construindo a sua fundação nas profundezas para que você possa suportar o peso da benção que virá.
+                    </p>
+                `
+            },
+            {
+                id: 2,
+                title: "O Significado Profundo da Parábola do Semeador",
+                category: "Novo Testamento",
+                author: "Dra. Mariana Costa",
+                date: "15 Set, 2026",
+                readTime: "5 min",
+                image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop",
+                excerpt: "Uma análise expositiva dos quatro tipos de solos e como a atitude do nosso coração determina a frutificação da Palavra de Deus.",
+                views: 980,
+                content: `
+                    <p class="lead text-lg font-medium text-slate-800 dark:text-slate-200">
+                        A Parábola do Semeador (Mateus 13) é uma das poucas que o próprio Jesus faz questão de explicar detalhadamente aos seus discípulos.
+                    </p>
+                    <h2 class="font-serif-title text-2xl font-bold text-navy-900 dark:text-white mt-8 mb-4">Os Quatro Solos do Coração</h2>
+                    <p>
+                        A semente é perfeita: é a Palavra de Deus. A variável decisiva da parábola não é o semeador nem a semente, mas sim a disposição e preparação do solo.
+                    </p>
+                    <ul class="list-disc pl-6 space-y-2 my-4">
+                        <strong class="text-gold-600">1. Beira do caminho:</strong> O coração endurecido pela insensibilidade.
+                        <br><strong class="text-gold-600">2. Solo pedregoso:</strong> A emoção superficial sem raiz profunda.
+                        <br><strong class="text-gold-600">3. Entre espinhos:</strong> As preocupações deste mundo e a ilusão das riquezas.
+                        <br><strong class="text-gold-600">4. Boa terra:</strong> O coração ensinável que ouve, entende e dá fruto a 100 por 1.
+                    </ul>
+                `
+            },
+            {
+                id: 3,
+                title: "Vencendo a Ansiedade pela Oração e Súplicas",
+                category: "Oração",
+                author: "Pr. João Gabriel",
+                date: "12 Set, 2026",
+                readTime: "6 min",
+                image: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?q=80&w=800&auto=format&fit=crop",
+                excerpt: "Estudo prático do texto de Filipenses 4:6-7 sobre como substituir a inquietude pela paz que excede todo o entendimento.",
+                views: 2100,
+                content: `
+                    <p class="lead text-lg font-medium text-slate-800 dark:text-slate-200">
+                        Em um mundo marcado pela aceleração e incertezas, a ordem do apóstolo Paulo ecoa com urgência e renovação: "Não andeis ansiosos por coisa alguma".
+                    </p>
+                    <h2 class="font-serif-title text-2xl font-bold text-navy-900 dark:text-white mt-8 mb-4">A Antítese da Ansiedade é a Oração de Ações de Graças</h2>
+                    <p>
+                        Paulo não sugere uma atitude de negação dos problemas, mas uma transferência de carga: apresentar os pedidos diante de Deus através de orações confiantes.
+                    </p>
+                `
+            },
+            {
+                id: 4,
+                title: "A Aliança no Antigo Testamento: Da Promessa à Cruz",
+                category: "Antigo Testamento",
+                author: "Prof. Ricardo Alves",
+                date: "08 Set, 2026",
+                readTime: "8 min",
+                image: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop",
+                excerpt: "Compreendendo a linha vermelha da redenção que conecta o pacto abraâmico até o sacrifício perfeito no Calvário.",
+                views: 850,
+                content: `
+                    <p class="lead text-lg font-medium text-slate-800 dark:text-slate-200">
+                        O Antigo Testamento não é um livro isolado da história da igreja; é a fundação sobre a qual a Nova Aliança foi edificada.
+                    </p>
+                `
+            }
+        ];
+
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            renderArticleCards(articles);
+            renderPopularArticles();
+            checkThemePreference();
+        });
+
+        // RENDER ARTICLE CARDS
+        function renderArticleCards(data) {
+            const container = document.getElementById('articles-list');
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white dark:bg-navy-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                        <i class="fa-solid fa-book-open text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium">Nenhum estudo encontrado para esta busca.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = data.map(article => `
+                <article onclick="loadArticle(${article.id})" class="bg-white dark:bg-navy-900 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all cursor-pointer group flex flex-col sm:flex-row gap-6 items-stretch">
+                    <div class="sm:w-1/3 rounded-xl overflow-hidden h-48 sm:h-auto relative shrink-0">
+                        <img src="${article.image}" alt="${article.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-3 left-3 bg-navy-900/80 backdrop-blur-md text-gold-400 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-gold-500/30">
+                            ${article.category}
+                        </span>
+                    </div>
+                    <div class="sm:w-2/3 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex items-center gap-3 text-xs text-slate-400 mb-2">
+                                <span><i class="fa-regular fa-calendar text-gold-500"></i> ${article.date}</span>
+                                <span>•</span>
+                                <span><i class="fa-regular fa-clock text-gold-500"></i> ${article.readTime}</span>
+                            </div>
+                            <h3 class="font-serif-title text-xl font-bold text-navy-900 dark:text-white group-hover:text-gold-600 dark:group-hover:text-gold-400 transition leading-snug">
+                                ${article.title}
+                            </h3>
+                            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mt-2 leading-relaxed">
+                                ${article.excerpt}
+                            </p>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+                            <span class="font-semibold text-slate-500 dark:text-slate-400">${article.author}</span>
+                            <span class="font-bold text-gold-600 dark:text-gold-400 group-hover:translate-x-1 transition flex items-center gap-1">
+                                Ler estudo <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </span>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // RENDER POPULAR ARTICLES IN SIDEBAR
+        function renderPopularArticles() {
+            const container = document.getElementById('popular-articles');
+            const sorted = [...articles].sort((a, b) => b.views - a.views).slice(0, 3);
+            
+            container.innerHTML = sorted.map((article, index) => `
+                <div onclick="loadArticle(${article.id})" class="flex items-center gap-3 cursor-pointer group">
+                    <span class="text-2xl font-serif-title font-bold text-slate-300 dark:text-slate-700 group-hover:text-gold-500 transition w-6 text-center">
+                        0${index + 1}
+                    </span>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-gold-600 dark:group-hover:text-gold-400 transition line-clamp-2">
+                            ${article.title}
+                        </h4>
+                        <span class="text-[10px] text-slate-400">${article.readTime} de leitura</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // LOAD ARTICLE INTO READER VIEW
+        function loadArticle(id) {
+            const article = articles.find(a => a.id === id);
+            if (!article) return;
+
+            document.getElementById('article-category').innerText = article.category;
+            document.getElementById('article-readtime').innerHTML = `<i class="fa-regular fa-clock"></i> ${article.readTime}`;
+            document.getElementById('article-title').innerText = article.title;
+            document.getElementById('article-author').innerText = article.author;
+            document.getElementById('article-date').innerText = article.date;
+            document.getElementById('article-image').src = article.image;
+            document.getElementById('article-body').innerHTML = article.content;
+
+            // Switch views
+            document.getElementById('feed-view').classList.add('hidden');
+            document.getElementById('article-view').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // SHOW HOME VIEW
+        function showHomeView() {
+            document.getElementById('article-view').classList.add('hidden');
+            document.getElementById('feed-view').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // CATEGORY FILTER
+        function filterCategory(category) {
+            showHomeView();
+            // Update active state on buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if(btn.innerText.includes(category) || (category === 'Todos' && btn.innerText === 'Todos')) {
+                    btn.className = "category-btn active px-4 py-2 rounded-full text-xs font-bold bg-navy-900 text-white dark:bg-gold-500 dark:text-navy-950 transition";
+                } else {
+                    btn.className = "category-btn px-4 py-2 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-gold-500 hover:text-navy-950 transition";
+                }
+            });
+
+            if (category === 'Todos') {
+                renderArticleCards(articles);
+            } else {
+                const filtered = articles.filter(a => a.category.toLowerCase().includes(category.toLowerCase()));
+                renderArticleCards(filtered);
+            }
+        }
+
+
+        // DARK MODE TOGGLE
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            }
+        }
+
+        function checkThemePreference() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('theme-toggle-dark-icon').classList.remove('hidden');
+                document.getElementById('theme-toggle-light-icon').classList.add('hidden');
+            }
+        }
+
+        // SEARCH MODAL LOGIC
+        function toggleSearchModal() {
+            const modal = document.getElementById('search-modal');
+            modal.classList.toggle('hidden');
+            if (!modal.classList.contains('hidden')) {
+                document.getElementById('search-input').focus();
+            }
+        }
+
+        function quickSearch(query) {
+            document.getElementById('search-input').value = query;
+            handleSearch();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = articles.filter(a => 
+                a.title.toLowerCase().includes(query) || 
+                a.excerpt.toLowerCase().includes(query) ||
+                a.category.toLowerCase().includes(query)
+            );
+            
+            renderArticleCards(filtered);
+            if (event && event.key === 'Enter') {
+                toggleSearchModal();
+                showHomeView();
+            }
+        }
+
+        // FONT SIZE ADJUSTER FOR READING
+        let currentFontSize = 18; // px
+        function changeFontSize(delta) {
+            currentFontSize = Math.max(14, Math.min(24, currentFontSize + delta));
+            document.getElementById('article-body').style.fontSize = `${currentFontSize}px`;
+            showToast(`Tamanho da fonte ajustado para ${currentFontSize}px`);
+        }
+
+        // MOBILE MENU TOGGLE
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // MODAL HANDLERS
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+
+        // TOAST NOTIFICATIONS
+        function showToast(message, icon = 'fa-circle-check') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = message;
+            toastIcon.className = `fa-solid ${icon} text-gold-500 dark:text-white text-lg`;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // NEWSLETTER SUBMISSION
+        function subscribeNewsletter(e) {
+            e.preventDefault();
+            const email = document.getElementById('newsletter-email').value;
+            showToast(`Inscrição realizada com sucesso para: ${email}`);
+            document.getElementById('newsletter-email').value = '';
+        }
+
+        // CONTACT FORM SUBMISSION
+        function handleContactSubmit(e) {
+            e.preventDefault();
+            closeModal('modal-contato');
+            showToast('Mensagem enviada com sucesso! Responderemos em breve.');
+        }
+
+        // SHARE ARTICLE
+        function shareArticle(platform) {
+            const url = window.location.href;
+            if (platform === 'whatsapp') {
+                window.open(`https://api.whatsapp.com/send?text=Confira este estudo bíblico edificante: ${encodeURIComponent(url)}`, '_blank');
+            }
+        }
+
+        function copyArticleLink() {
+            const dummy = document.createElement('input');
+            document.body.appendChild(dummy);
+            dummy.value = window.location.href;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showToast('Link copiado para a área de transferência!');
+        }
+    </script>
+</body>
+</html>
